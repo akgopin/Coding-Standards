@@ -63,6 +63,10 @@ public class TradingInstruction {
         checkState(pricePerUnit.compareTo(BigDecimal.ZERO) > 0, "Price per unit should be greater than zero");
     }
 
+    /*
+    *  Calculates the USD equivalent amount of the trade.
+    *
+    * */
     public BigDecimal determineTradeAmount() {
         return pricePerUnit.multiply(rate).multiply(new BigDecimal(numberOfUnits));
     }
