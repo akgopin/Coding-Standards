@@ -1,5 +1,6 @@
 package com.org.trade.core.domain;
 
+import com.org.trade.core.domain.util.DateUtil;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -7,6 +8,7 @@ import org.junit.rules.ExpectedException;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import static com.org.trade.core.domain.fixture.HappyPathBuilder.buildTradingInstruction;
 
@@ -95,6 +97,57 @@ public class TradingInstructionTest {
         expectedEx.expect(IllegalStateException.class);
         expectedEx.expectMessage("Price per unit should be greater than zero");
         buildTradingInstruction().withPricePerUnit(new BigDecimal("-1")).build();
+    }
+
+    @Test
+    public void expect_settlement_date_pushed_considering_saturday_sunday_for_currencies_other_than_SAR_and_AED() {
+        LocalDate actualDateOnSunday = LocalDate.of(2017, 8, 13);
+        LocalDate calculatedDateOnMonday = LocalDate.of(2017, 8, 14);
+        TradingInstruction tradingInstruction = buildTradingInstruction().withSettlementDate(actualDateOnSunday)
+                .withCurrency("USD")
+                .build();
+        assertThat(calculatedDateOnMonday, is(tradingInstruction.getSettlementDate()));
+
+        LocalDate actualDateOnSaturday = LocalDate.of(2017, 8, 12);
+        tradingInstruction = buildTradingInstruction().withSettlementDate(actualDateOnSaturday)
+                .withCurrency("USD")
+                .build();
+        assertThat(calculatedDateOnMonday, is(tradingInstruction.getSettlementDate()));
+
+    }
+
+    @Test
+    public void expect_settlement_date_pushed_considering_saturday_sunday_for_currencies_for_SAR() {
+        LocalDate actualDateOnFriday = LocalDate.of(2017, 8, 11);
+        LocalDate calculatedDateOnSunday = LocalDate.of(2017, 8, 13);
+        TradingInstruction tradingInstruction = buildTradingInstruction().withSettlementDate(actualDateOnFriday)
+                .withCurrency("SAR")
+                .build();
+        assertThat(calculatedDateOnSunday, is(tradingInstruction.getSettlementDate()));
+
+        LocalDate actualDateOnSaturday = LocalDate.of(2017, 8, 12);
+        tradingInstruction = buildTradingInstruction().withSettlementDate(actualDateOnSaturday)
+                .withCurrency("SAR")
+                .build();
+        assertThat(calculatedDateOnSunday, is(tradingInstruction.getSettlementDate()));
+
+    }
+
+    @Test
+    public void expect_settlement_date_pushed_considering_saturday_sunday_for_currencies_for_AED() {
+        LocalDate actualDateOnFriday = LocalDate.of(2017, 8, 11);
+        LocalDate calculatedDateOnSunday = LocalDate.of(2017, 8, 13);
+        TradingInstruction tradingInstruction = buildTradingInstruction().withSettlementDate(actualDateOnFriday)
+                .withCurrency("AED")
+                .build();
+        assertThat(calculatedDateOnSunday, is(tradingInstruction.getSettlementDate()));
+
+        LocalDate actualDateOnSaturday = LocalDate.of(2017, 8, 12);
+        tradingInstruction = buildTradingInstruction().withSettlementDate(actualDateOnSaturday)
+                .withCurrency("AED")
+                .build();
+        assertThat(calculatedDateOnSunday, is(tradingInstruction.getSettlementDate()));
+
     }
 
     @Test

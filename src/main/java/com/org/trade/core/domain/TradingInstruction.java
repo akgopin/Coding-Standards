@@ -11,7 +11,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 /*
 *  Trading instruction is a domain object that represents an instruction customer has requested the trading
- *  organisation to execute in the international market.
+*  organisation to execute in the international market.
 *
 */
 public class TradingInstruction {
@@ -38,7 +38,7 @@ public class TradingInstruction {
     */
     private final LocalDate instructionDate;
     /*
-    * Date on which the instruction to be settled
+     * Date on which the instruction to be settled
     */
     private final LocalDate settlementDate;
     /*
@@ -65,6 +65,10 @@ public class TradingInstruction {
         checkState(pricePerUnit.compareTo(BigDecimal.ZERO) > 0, "Price per unit should be greater than zero");
     }
 
+    public LocalDate getSettlementDate() {
+        return settlementDate;
+    }
+
     /*
     *  Calculates the USD equivalent amount of the trade.
     *
@@ -74,7 +78,7 @@ public class TradingInstruction {
     }
 
     private LocalDate determineSettlementDate(final LocalDate settlementDate) {
-        if (isCurrencyAEDorSAR()) {
+        if (isCurrencyAEDorSAR()) { // For SAR and AED the week end is friday and saturday
             return DateUtil.determineNextAllowableDate(settlementDate, Weekend.FRI_SAT);
         } else {
             return DateUtil.determineNextAllowableDate(settlementDate, Weekend.SAT_SUN);

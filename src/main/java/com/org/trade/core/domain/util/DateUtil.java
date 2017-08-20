@@ -6,8 +6,15 @@ import java.time.LocalDate;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+/*
+ *  Utility for date operations.
+ */
 public class DateUtil {
 
+    /*
+    *  The method accepts a date and week end. If date falls on weekend then the date is incremented until
+    *  weekday is found.
+    */
     public static LocalDate determineNextAllowableDate(final LocalDate localDate,final Weekend weekend) {
         checkNotNull(localDate, "Input date should not be null");
         checkNotNull(weekend, "Weekend should not be null");
