@@ -1,6 +1,7 @@
 package com.org.trade.core.domain;
 
 import com.google.common.base.Objects;
+import com.org.trade.core.domain.util.DateUtil;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -56,7 +57,8 @@ public class TradingInstruction {
         checkState(rate.compareTo(BigDecimal.ZERO) > 0, "Agreed rate should be greater than zero");
         currency = checkNotNull(builder.currency, "Currency should not be null when building %s", this.getClass());
         instructionDate = checkNotNull(builder.instructionDate, "Instruction date should not be null when building %s", this.getClass());
-        settlementDate = checkNotNull(builder.settlementDate, "Settlement date should not be null when building %s", this.getClass());
+        checkNotNull(builder.settlementDate, "Settlement date should not be null when building %s", this.getClass());
+        settlementDate = determineSettlementDate(builder.settlementDate);
         checkState(builder.numberOfUnits > 0, "No of units should be greater than zero");
         numberOfUnits = builder.numberOfUnits;
         pricePerUnit = checkNotNull(builder.pricePerUnit, "Price per unit should not be null when building %s", this.getClass());
@@ -69,6 +71,18 @@ public class TradingInstruction {
     * */
     public BigDecimal determineTradeAmount() {
         return pricePerUnit.multiply(rate).multiply(new BigDecimal(numberOfUnits));
+    }
+
+    private LocalDate determineSettlementDate(final LocalDate settlementDate) {
+        if (isCurrencyAEDorSAR()) {
+            return DateUtil.determineNextAllowableDate(settlementDate, Weekend.FRI_SAT);
+        } else {
+            return DateUtil.determineNextAllowableDate(settlementDate, Weekend.SAT_SUN);
+        }
+    }
+
+    private boolean isCurrencyAEDorSAR() {
+        return "AED".equalsIgnoreCase(currency) || "SAR".equalsIgnoreCase(currency);
     }
 
     @Override
