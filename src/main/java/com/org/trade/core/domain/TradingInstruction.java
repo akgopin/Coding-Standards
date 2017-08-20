@@ -1,5 +1,7 @@
 package com.org.trade.core.domain;
 
+import com.google.common.base.Objects;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
@@ -29,6 +31,26 @@ public class TradingInstruction {
         noOfUnits = builder.noOfUnits;
         pricePerUnit = checkNotNull(builder.pricePerUnit, "Price per unit should not be null when building %s", this.getClass());
         checkState(pricePerUnit.compareTo(BigDecimal.ZERO)>0,"Price per unit should be greater than zero");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o){ return true; }
+        if (o == null || getClass() != o.getClass()){ return false;}
+        TradingInstruction that = (TradingInstruction) o;
+        return noOfUnits == that.noOfUnits &&
+                productType == that.productType &&
+                direction == that.direction &&
+                Objects.equal(agreedFxRate, that.agreedFxRate) &&
+                Objects.equal(currency, that.currency) &&
+                Objects.equal(instructionDate, that.instructionDate) &&
+                Objects.equal(settlementDate, that.settlementDate) &&
+                Objects.equal(pricePerUnit, that.pricePerUnit);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(productType, direction, agreedFxRate, currency, instructionDate, settlementDate, noOfUnits, pricePerUnit);
     }
 
 
