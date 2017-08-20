@@ -69,6 +69,10 @@ public class TradingInstruction {
         return settlementDate;
     }
 
+    public Direction getDirection() {
+        return direction;
+    }
+
     /*
     *  Calculates the USD equivalent amount of the trade.
     *
