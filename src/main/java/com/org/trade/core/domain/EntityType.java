@@ -1,5 +1,5 @@
 package com.org.trade.core.domain;
 
-public enum ProductType {
+public enum EntityType {
     GOLD, OIL, CURRENCY;
 }

@@ -21,8 +21,8 @@ public class TradingInstructionTest {
     @Test
     public void expect_tradingInstruction_doesnot_builds_when_productType_is_null(){
         expectedEx.expect(NullPointerException.class);
-        expectedEx.expectMessage("Product type should not be null");
-        buildTradingInstruction().withProductType(null).build();
+        expectedEx.expectMessage("Entity type should not be null");
+        buildTradingInstruction().withEntityType(null).build();
     }
 
     @Test
@@ -64,14 +64,14 @@ public class TradingInstructionTest {
     public void expect_tradingInstruction_doesnot_builds_when_number_of_units_is_negative(){
         expectedEx.expect(IllegalStateException.class);
         expectedEx.expectMessage("No of units should be greater than zero");
-        buildTradingInstruction().withNoOfUnits(-1).build();
+        buildTradingInstruction().withNumberOfUnits(-1).build();
     }
 
     @Test
     public void expect_tradingInstruction_doesnot_builds_when_number_of_units_is_zero(){
         expectedEx.expect(IllegalStateException.class);
         expectedEx.expectMessage("No of units should be greater than zero");
-        buildTradingInstruction().withNoOfUnits(0).build();
+        buildTradingInstruction().withNumberOfUnits(0).build();
     }
 
     @Test

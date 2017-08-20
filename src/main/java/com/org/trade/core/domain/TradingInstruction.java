@@ -2,46 +2,84 @@ package com.org.trade.core.domain;
 
 import com.google.common.base.Objects;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+
+/*
+*  Trading instruction is a domain object that represents an instruction customer has requested the trading
+ *  organisation to execute in the international market.
+*
+*/
 public class TradingInstruction {
 
-    private final ProductType productType;
+    /*
+    *  Entity to be traded see {@link EntityType}
+    */
+    private final EntityType entityType;
+    /*
+     * Indicates if it  is a buy or sell instruction {@link Direction}
+     */
     private final Direction direction;
-    private final BigDecimal agreedFxRate;
+    /*
+    * Agreed rate at which the entity to be bought or sold in the market.
+    * Rate is the USD -> Currency exchange rate
+    */
+    private final BigDecimal rate;
+    /*
+    * Currency in which trade to be executed.
+    */
     private final String currency;
+    /*
+    * Date on which the customers send the instruction
+    */
     private final LocalDate instructionDate;
+    /*
+    * Date on which the instruction to be settled
+    */
     private final LocalDate settlementDate;
-    private final int noOfUnits;
+    /*
+    * Number of units to be sold or bought
+    */
+    private final int numberOfUnits;
+    /*
+    * Price per unit
+    * */
     private final BigDecimal pricePerUnit;
 
     private TradingInstruction(final Builder builder) {
-        productType = checkNotNull(builder.productType, "Product type should not be null when building %s", this.getClass());
+        entityType = checkNotNull(builder.entityType, "Entity type should not be null when building %s", this.getClass());
         direction = checkNotNull(builder.direction, "Direction should not be null when building %s", this.getClass());
-        agreedFxRate = checkNotNull(builder.agreedFxRate, "Agreed FX Rate should not be null when building %s", this.getClass());
-        checkState(agreedFxRate.compareTo(BigDecimal.ZERO)>0,"Agreed rate should be greater than zero");
+        rate = checkNotNull(builder.agreedFxRate, "Agreed FX Rate should not be null when building %s", this.getClass());
+        checkState(rate.compareTo(BigDecimal.ZERO) > 0, "Agreed rate should be greater than zero");
         currency = checkNotNull(builder.currency, "Currency should not be null when building %s", this.getClass());
         instructionDate = checkNotNull(builder.instructionDate, "Instruction date should not be null when building %s", this.getClass());
         settlementDate = checkNotNull(builder.settlementDate, "Settlement date should not be null when building %s", this.getClass());
-        checkState(builder.noOfUnits > 0,"No of units should be greater than zero");
-        noOfUnits = builder.noOfUnits;
+        checkState(builder.numberOfUnits > 0, "No of units should be greater than zero");
+        numberOfUnits = builder.numberOfUnits;
         pricePerUnit = checkNotNull(builder.pricePerUnit, "Price per unit should not be null when building %s", this.getClass());
-        checkState(pricePerUnit.compareTo(BigDecimal.ZERO)>0,"Price per unit should be greater than zero");
+        checkState(pricePerUnit.compareTo(BigDecimal.ZERO) > 0, "Price per unit should be greater than zero");
+    }
+
+    public BigDecimal determineTradeAmount() {
+        return pricePerUnit.multiply(rate).multiply(new BigDecimal(numberOfUnits));
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o){ return true; }
-        if (o == null || getClass() != o.getClass()){ return false;}
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         TradingInstruction that = (TradingInstruction) o;
-        return noOfUnits == that.noOfUnits &&
-                productType == that.productType &&
+        return numberOfUnits == that.numberOfUnits &&
+                entityType == that.entityType &&
                 direction == that.direction &&
-                Objects.equal(agreedFxRate, that.agreedFxRate) &&
+                Objects.equal(rate, that.rate) &&
                 Objects.equal(currency, that.currency) &&
                 Objects.equal(instructionDate, that.instructionDate) &&
                 Objects.equal(settlementDate, that.settlementDate) &&
@@ -50,19 +88,19 @@ public class TradingInstruction {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(productType, direction, agreedFxRate, currency, instructionDate, settlementDate, noOfUnits, pricePerUnit);
+        return Objects.hashCode(entityType, direction, rate, currency, instructionDate, settlementDate, numberOfUnits, pricePerUnit);
     }
 
 
     public static class Builder {
 
-        private ProductType productType;
+        private EntityType entityType;
         private Direction direction;
         private BigDecimal agreedFxRate;
         private String currency;
         private LocalDate instructionDate;
         private LocalDate settlementDate;
-        private int noOfUnits;
+        private int numberOfUnits;
         private BigDecimal pricePerUnit;
 
         private Builder() {
@@ -72,8 +110,8 @@ public class TradingInstruction {
             return new Builder();
         }
 
-        public Builder withProductType(final ProductType productType) {
-            this.productType = productType;
+        public Builder withEntityType(final EntityType entityType) {
+            this.entityType = entityType;
             return this;
         }
 
@@ -102,8 +140,8 @@ public class TradingInstruction {
             return this;
         }
 
-        public Builder withNoOfUnits(final int noOfUnits) {
-            this.noOfUnits = noOfUnits;
+        public Builder withNumberOfUnits(final int numberOfUnits) {
+            this.numberOfUnits = numberOfUnits;
             return this;
         }
 
