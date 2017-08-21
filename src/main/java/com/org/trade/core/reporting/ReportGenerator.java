@@ -35,12 +35,7 @@ public class ReportGenerator {
     *
     */
     public BigDecimal calculateTotalOfIncomingTransactions(final LocalDate settledDate) {
-        return tradingInstructions.stream()
-                .filter(tradingInstruction -> tradingInstruction.getDirection() == Direction.SELL)
-                .filter(tradingInstruction -> tradingInstruction.getSettlementDate() == settledDate)
-                .map(tradingInstruction -> tradingInstruction.determineTradeAmount())
-                .reduce(BigDecimal::add)
-                .orElse(BigDecimal.ZERO);
+        return calculateTotal(settledDate, Direction.SELL);
     }
 
     /*
@@ -50,31 +45,37 @@ public class ReportGenerator {
     *
     */
     public BigDecimal calculateTotalOfOutgoingTransactions(final LocalDate settledDate) {
-        return tradingInstructions.stream()
-                .filter(tradingInstruction -> tradingInstruction.getDirection() == Direction.BUY)
-                .filter(tradingInstruction -> tradingInstruction.getSettlementDate() == settledDate)
-                .map(tradingInstruction -> tradingInstruction.determineTradeAmount())
-                .reduce(BigDecimal::add)
-                .orElse(BigDecimal.ZERO);
+        return calculateTotal(settledDate, Direction.BUY);
     }
 
     /*
      *  Returns the list of Incoming tradings on ascending order of trading amount.
      */
     public List<TradingInstruction> sortIncomingTradingByAmount(final LocalDate settledDate) {
-        return tradingInstructions.stream()
-                .filter(tradingInstruction -> tradingInstruction.getDirection() == Direction.SELL)
-                .filter(tradingInstruction -> tradingInstruction.getSettlementDate() == settledDate)
-                .sorted((ins1, ins2) -> ins1.determineTradeAmount().compareTo(ins2.determineTradeAmount()))
-                .collect(Collectors.toList());
+        return sort(settledDate, Direction.SELL);
     }
 
     /*
      *  Returns the list of outgoing tradings on ascending order of trading amount.
      */
     public List<TradingInstruction> sortOutgoingTradingByAmount(final LocalDate settledDate) {
+        return sort(settledDate, Direction.BUY);
+    }
+
+    private BigDecimal calculateTotal(LocalDate settledDate, Direction direction) {
+        checkNotNull(settledDate, "Settled date should not be null");
         return tradingInstructions.stream()
-                .filter(tradingInstruction -> tradingInstruction.getDirection() == Direction.BUY)
+                .filter(tradingInstruction -> tradingInstruction.getDirection() == direction)
+                .filter(tradingInstruction -> tradingInstruction.getSettlementDate().isEqual(settledDate))
+                .map(tradingInstruction -> tradingInstruction.determineTradeAmount())
+                .reduce(BigDecimal::add)
+                .orElse(BigDecimal.ZERO);
+    }
+
+    private List<TradingInstruction> sort(final LocalDate settledDate, final Direction direction) {
+        checkNotNull(settledDate, "Settled date should not be null");
+        return tradingInstructions.stream()
+                .filter(tradingInstruction -> tradingInstruction.getDirection() == direction)
                 .filter(tradingInstruction -> tradingInstruction.getSettlementDate() == settledDate)
                 .sorted((ins1, ins2) -> ins1.determineTradeAmount().compareTo(ins2.determineTradeAmount()))
                 .collect(Collectors.toList());
