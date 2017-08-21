@@ -38,11 +38,11 @@ public class HappyPathBuilder {
         ArrayList<TradingInstruction> tradingInstructions = new ArrayList<>();
         Builder builder = buildTradingInstruction().withSettlementDate(AUGUST_FOURTEEN_2017);
         tradingInstructions.add(builder.withDirection(direction).withEntityType(EntityType.CURRENCY).withNumberOfUnits(20).build());
-        //Different entity amd differemt price for each entity
+        //Different entity amd different price for each entity
         builder = buildTradingInstruction().withSettlementDate(AUGUST_FOURTEEN_2017);
         tradingInstructions.add(builder.withDirection(direction).withEntityType(EntityType.OIL).withPricePerUnit(new BigDecimal("50")).build());
 
-        //Different entity amd differemt agreed rate
+        //Different entity amd different agreed rate
         builder = buildTradingInstruction().withSettlementDate(AUGUST_FOURTEEN_2017);
         tradingInstructions.add(builder.withDirection(direction).withEntityType(EntityType.GOLD).withAgreedFxRate(new BigDecimal("1.2")).build());
 

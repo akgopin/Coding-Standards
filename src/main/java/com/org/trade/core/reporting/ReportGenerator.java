@@ -76,7 +76,7 @@ public class ReportGenerator {
         checkNotNull(settledDate, "Settled date should not be null");
         return tradingInstructions.stream()
                 .filter(tradingInstruction -> tradingInstruction.getDirection() == direction)
-                .filter(tradingInstruction -> tradingInstruction.getSettlementDate() == settledDate)
+                .filter(tradingInstruction -> tradingInstruction.getSettlementDate().isEqual(settledDate))
                 .sorted((ins1, ins2) -> ins1.determineTradeAmount().compareTo(ins2.determineTradeAmount()))
                 .collect(Collectors.toList());
     }

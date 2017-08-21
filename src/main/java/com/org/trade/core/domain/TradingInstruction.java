@@ -17,7 +17,7 @@ import static com.google.common.base.Preconditions.checkState;
 public class TradingInstruction {
 
     /*
-    *  Entity to be traded see {@link EntityType}
+     *  Entity to be traded see {@link EntityType}
     */
     private final EntityType entityType;
     /*
@@ -71,6 +71,10 @@ public class TradingInstruction {
 
     public Direction getDirection() {
         return direction;
+    }
+
+    public EntityType getEntityType() {
+        return entityType;
     }
 
     /*
